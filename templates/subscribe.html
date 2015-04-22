@@ -1,0 +1,31 @@
+
+<H2>Subscribe</H2>
+Get specific wisdom from Proverbs set to your phone.<br><br>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+  <br>
+
+  <form method="POST" action "{{url_for('home')}}">
+      {{ form.hidden_tag() }}
+      {{ form.phone.label }}<br>
+      {{ form.phone(size=20)}}<br><br>
+      {{ form.carrier.label }}<br>
+      {{ form.carrier()}}<br><br>
+      {{ form.frequency.label }}<br>
+      {{ form.frequency()}}<br><br>
+      {{ form.taglist.label }}<br>
+      {{ form.taglist()}}<br><br>
+
+      <input type="submit" name="action" value="Subscribe!" width="140">
+      <input type="submit" name="action" value="Return Home" width="140">
+
+  </form>
+ <br><br>
