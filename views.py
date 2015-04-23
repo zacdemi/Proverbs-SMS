@@ -35,7 +35,7 @@ def subscribe():
         phone = form.phone.data
         if request.form['action'] == "Subscribe!":
             if form.validate == False:
-                flash("Please enter required fields")
+                flash_errors(form)
             elif form.validate and proverbs.userexist(phone):
                 flash("this phone number has already been subscribed. "
                       "to unsubscribe, go to the manage my subscription "
@@ -97,7 +97,7 @@ def manage():
         elif request.form['action'] == "Update Subscription":
             return render_template('manage.html',update = True,form=form,form1=form1)
         elif request.form['action'] == "Submit Changes" and form1.validate_on_submit:
-            if userexist == False:
+            if proverbs.userexist == False:
                 flash(str(phone) + " is not subscribed. Please subscribe first")
             else:
                 taglist = form1.taglist.data
