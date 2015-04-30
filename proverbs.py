@@ -15,7 +15,7 @@ appname = "Proverbs-SMS"
 def adduser(phone,carrier,taglist,frequency):
     count = users.find({"Phone":phone}).count()
     #generate new confirmation code
-    confirmation = random.randrange(10000,50000)
+    confirmation = random.randrange(1000,5000)
 
     #does phone already exist
     if count > 0: #if user exist, update the confrim code and replace tags 
@@ -25,7 +25,7 @@ def adduser(phone,carrier,taglist,frequency):
         return update
     else: #add a new user
         newuser = {"Phone":phone,"Carrier":carrier,"Tags":taglist,
-                "Confirmation":confirmation,"Frequency":frequency,"History":"1:7"}
+                "Confirmation":confirmation,"Frequency":frequency,"History":[]}
         users.insert(newuser)
 
 def subscribe_user(phone,action): #set action to Yes or No
@@ -33,7 +33,7 @@ def subscribe_user(phone,action): #set action to Yes or No
     return update
 
 def update_user(phone,taglist,frequency):
-    update = users.update({"Phone":phone},{"$set": {"Tags":taglist,"Frequency":frequency}})
+    update = users.update({"Phone":phone},{"$set": {"Tags":taglist,"Frequency":frequency,"History":[]}})
     return update
 
 def checkconfirm(phone,confirmation):
@@ -59,7 +59,7 @@ def findrandom(taglist):
     return  t
 
 
-#uses find random until a verse is found that doesn't exist
+#uses find random until a verse is found that doesn't exist in history.
 def selectverse(phone):
     user = users.find_one({"Phone":phone})   
     taglist = user["Tags"]
@@ -144,14 +144,13 @@ def sendproverbs():
         message = make_message(selectverse(phone))
 
         #send text
-        print "Sending out Proverbs to all subscribers"
         server.sendmail('Wisdom',address,message)
-        print "Success"
 
 #convert distinct tags into tuples for checkboxes
 def distincttag():
     taglist = collection.distinct("Tags")
     tagtuple = [(x, x.capitalize()) for x in taglist]
+    tagtuple = sorted(tagtuple)
     return tagtuple
 
 def verse_length():

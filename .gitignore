@@ -1,0 +1,6 @@
+config.py
+*.pyc
+*.swp
+test.py
+textPhone.py
+send.py

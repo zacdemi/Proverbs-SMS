@@ -1,3 +1,10 @@
+from pymongo import MongoClient
+from bson.json_util import dumps
+
+client = MongoClient()
+db = client.bible
+collection = db.bible
+
 def addtag(book, chapter, verse, *args):
     Tags = [item.lower() for item in list(args)]
     collection.update(
