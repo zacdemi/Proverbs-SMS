@@ -19,8 +19,8 @@ class MultiCheckboxField(SelectMultipleField):
 
 class Subscribe(Form):
     phone = IntegerField('Telephone',[validators.DataRequired()])
-    carrier = SelectField('Carrier',choices=[("AT&T","AT&T"),("Verizon","Verizon")])
-    frequency = SelectField('Frequency',choices=[([0,1,2,3,4,5,6],"Daily"),([0,1],"2x Week"),([0,1,2],"3x Week")])
+    carrier = SelectField('Carrier',choices=[("AT&T","AT&T"),("Verizon","Verizon"),("Sprint","Sprint")])
+    frequency = SelectField('Frequency',choices=[(7,"Daily"),(2,"2x Week"),(3,"3x Week")])
     taglist = MultiCheckboxField('Select Tags',choices=tagtuple,validators=[validators.Required()])
 
 class Phone(Form):
@@ -28,7 +28,7 @@ class Phone(Form):
 
 class UpdateSubscription(Form):
     taglist = MultiCheckboxField('Select Tags',choices=tagtuple,validators=[validators.Required()])
-    frequency = SelectField('Frequency',choices=[([0,1,2,3,4,5,6],"Daily"),([0,1],"2x Week"),([0,1,2],"3x Week")])
+    frequency = SelectField('Frequency',choices=[(7,"Daily"),(2,"2x Week"),(3,"3x Week")])
 
 class ConfirmCode(Form):
     phone = IntegerField('Telephone',[validators.DataRequired()])

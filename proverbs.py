@@ -9,7 +9,7 @@ client = MongoClient()
 db = client.bible
 collection = db.bible
 users = db.users
-carrier_list = {'AT&T':'@mms.att.net','Verizon':'@vtext.com'}
+carrier_list = {'AT&T':'@mms.att.net','Verizon':'@vtext.com','Sprint':'@messaging.sprintpcs.com'}
 appname = "Proverbs-SMS"
 
 def adduser(phone,carrier,taglist,frequency):
@@ -17,22 +17,20 @@ def adduser(phone,carrier,taglist,frequency):
     #generate new confirmation code
     confirmation = random.randrange(1000,5000)
 
-    #does phone already exist
-    if count > 0: #if user exist, update the confrim code and replace tags 
-        update = users.update(
-                {"Phone":phone},{"$set": {"Confirmation":confirmation,"Tags":taglist,
-                    "Frequency":frequency,"History":[]}})
-        return update
-    else: #add a new user
-        newuser = {"Phone":phone,"Carrier":carrier,"Tags":taglist,
+    frequency = [i*1 for i in range(int(frequency))]
+
+    newuser = {"Phone":phone,"Carrier":carrier,"Tags":taglist,
                 "Confirmation":confirmation,"Frequency":frequency,"History":[]}
-        users.insert(newuser)
+    #remove user if they already existed
+    users.remove({"Phone":phone})
+    users.insert(newuser)
 
 def subscribe_user(phone,action): #set action to Yes or No
-    update = users.update({"Phone":phone},{"$set": {"Subscribed":action}})
+    update = users.update({"Phone":phone},{"$set": {"Subscribed":action,"Date":datetime.now()}})
     return update
 
 def update_user(phone,taglist,frequency):
+    frequency = [i*1 for i in range(int(frequency))]
     update = users.update({"Phone":phone},{"$set": {"Tags":taglist,"Frequency":frequency,"History":[]}})
     return update
 
@@ -59,7 +57,7 @@ def findrandom(taglist):
     return  t
 
 
-#uses find random until a verse is found that doesn't exist in history.
+#uses findrandom until a verse is found that doesn't exist in history.
 def selectverse(phone):
     user = users.find_one({"Phone":phone})   
     taglist = user["Tags"]
@@ -88,7 +86,7 @@ def push_new(phone,verse_id):
     users.update({"Phone":phone},{"$push":{"History":verse_id}})
 
 #user has used all tags
-#uses oldest and moves it to beginning of array
+#uses oldest proverb and moves it to beginning of array
 def pop_new(phone):
     #finds oldest proverb from history
     oldest = users.find_one({"Phone":phone},{"History":{"$slice":1}})
@@ -119,7 +117,7 @@ def sendconfirm(phone):
     user = users.find_one({"Phone":phone})   
     carrier = user["Carrier"]
     address = str(phone) + carrier_list[carrier]
-    #two confrim texts are sent
+    #two confirm texts are sent
     if userexist(phone):
         message = ("The fear of the LORD is the beginning of knowledge; " 
                    "fools despise wisdom and instruction. 1 7")
@@ -134,18 +132,22 @@ def sendproverbs():
     server.starttls()
     server.login(config.username,config.password)
 
+    today = datetime.strftime(datetime.today(),"%w")
+
     #loop through user database
     subscribers = users.find({"Test":"Yes"}) 
     for each in subscribers:
         phone = each["Phone"]
         carrier = each["Carrier"]
         tags = each["Tags"]
+        frequency = each["Frequency"]
         address = str(phone) + carrier_list[carrier]
         message = make_message(selectverse(phone))
 
         #send text
-        server.sendmail('Wisdom',address,message)
-
+        if int(today) in frequency: 
+            server.sendmail('Wisdom',address,message)
+       
 #convert distinct tags into tuples for checkboxes
 def distincttag():
     taglist = collection.distinct("Tags")
