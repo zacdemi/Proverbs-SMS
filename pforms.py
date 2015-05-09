@@ -3,6 +3,7 @@ from wtforms import validators, StringField, IntegerField, SelectField, SelectMu
 from flask_wtf import Form
 
 tagtuple = distincttag()
+frequency_list = [(7,"Daily"),(6,"6x Week"),(5,"5x Week"),(4,"4x Week"),(3,"3x Week"),(2,"2x Week"),(1,"1x Week")]
 
 class searchtag(Form):
     search = StringField('Search Tag',[validators.DataRequired()],default="Work")
@@ -20,7 +21,7 @@ class MultiCheckboxField(SelectMultipleField):
 class Subscribe(Form):
     phone = IntegerField('Telephone',[validators.DataRequired()])
     carrier = SelectField('Carrier',choices=[("AT&T","AT&T"),("Verizon","Verizon"),("Sprint","Sprint")])
-    frequency = SelectField('Frequency',choices=[(7,"Daily"),(2,"2x Week"),(3,"3x Week")])
+    frequency = SelectField('Frequency',choices=frequency_list)
     taglist = MultiCheckboxField('Select Tags',choices=tagtuple,validators=[validators.Required()])
 
 class Phone(Form):
@@ -28,8 +29,10 @@ class Phone(Form):
 
 class UpdateSubscription(Form):
     taglist = MultiCheckboxField('Select Tags',choices=tagtuple,validators=[validators.Required()])
-    frequency = SelectField('Frequency',choices=[(7,"Daily"),(2,"2x Week"),(3,"3x Week")])
+    frequency = SelectField('Frequency',choices=frequency_list)
 
 class ConfirmCode(Form):
     phone = IntegerField('Telephone',[validators.DataRequired()])
     confirm_code = IntegerField('Enter Confirmation Code',validators=[validators.Required()])
+
+

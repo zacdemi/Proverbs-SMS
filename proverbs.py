@@ -146,12 +146,23 @@ def sendproverbs():
 
         #send text
         if int(today) in frequency: 
+            print message
             server.sendmail('Wisdom',address,message)
        
 #convert distinct tags into tuples for checkboxes
 def distincttag():
-    taglist = collection.distinct("Tags")
-    tagtuple = [(x, x.capitalize()) for x in taglist]
+    #taglist = collection.distinct("Tags")
+    taglist = ['anger','humility','joy','parenting','pride','speech','money','laziness','work','lust']
+    
+    tagtuple = []
+    for x in taglist:
+        count = collection.find({"Tags":x}).count()
+        capital = x.capitalize()
+        tag = x
+        
+        insert = (tag,capital + ' (' + str(count) + ')')
+        tagtuple.append(insert)
+
     tagtuple = sorted(tagtuple)
     return tagtuple
 
