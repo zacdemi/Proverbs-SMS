@@ -1,25 +1,26 @@
-
-<H2>Confirm Code</H2>
-<br>
-<br>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
-  <br>
-  <form method="POST" action "">
-      
-      {{ form.hidden_tag() }}
-      {{ form.confirm_code.label }}<br>
-      {{ form.confirm_code(size=20)}}<br><br>
-      
-      <input type="submit" name="action" value="Confirm Code" width="140">
-      <input type="submit" name="action" value="Regenerate Confirm" width="170"><br><br>
-
-  </form>
- <br><br>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href={{ url_for('static',filename='style.css')}}/>
+  </head>
+  <div id="page-wrap">
+  <body>
+    <title>get proverbs</title>
+    <font size ="36">get proverbs</font></p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <p><div class="{{ category }}">{{ message }}</div></p>
+                {% endfor %}
+            {% else %}
+                Please enter your confirmation code.<br><br>
+            {% endif %}
+        {% endwith %}
+    <form action "{{url_for('home')}}"  method="post">
+        {{form.hidden_tag()}}
+        {{form.confirm_code(placeholder="1234")}}
+        <input type="submit" class="button" name="action" id="submit" value="CONFIRM CODE">
+    </form>
+  </body>
+  </div>
+</html>

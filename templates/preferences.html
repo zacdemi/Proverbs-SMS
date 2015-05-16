@@ -13,9 +13,18 @@
                 <p><div class="{{ category }}">{{ message }}</div></p>
                 {% endfor %}
             {% else %}
-                <br>
+                Please select your preferences.<br><br>
             {% endif %}
         {% endwith %}
+    <form action ""  method="post">
+        {{form.hidden_tag()}}
+        {{form.frequency()}}
+        {{form.taglist()}}
+        <input type="submit" class="button" name="action" id="submit" value="SUBMIT">
+        {% if unsubscribe == True %}
+            <input type="submit" class="button" name="action" id="submit" value="UNSUBSCRIBE">
+        {% endif %}
+    </form>
   </body>
   </div>
 </html>

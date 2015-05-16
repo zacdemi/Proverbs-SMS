@@ -3,7 +3,7 @@ from bson.json_util import dumps
 import config
 from datetime import datetime
 import random
-import smtplib
+import plivo
 
 client = MongoClient()
 db = client.bible
@@ -12,18 +12,18 @@ users = db.users
 carrier_list = {'AT&T':'@mms.att.net','Verizon':'@vtext.com','Sprint':'@messaging.sprintpcs.com'}
 appname = "Proverbs-SMS"
 
-def adduser(phone,carrier,taglist,frequency):
-    count = users.find({"Phone":phone}).count()
+def adduser(phone):
     #generate new confirmation code
     confirmation = random.randrange(1000,5000)
 
-    frequency = [i*1 for i in range(int(frequency))]
-
-    newuser = {"Phone":phone,"Carrier":carrier,"Tags":taglist,
-                "Confirmation":confirmation,"Frequency":frequency,"History":[]}
+    newuser = {"Phone":phone,"Confirmation":confirmation,"History":[]}
     #remove user if they already existed
     users.remove({"Phone":phone})
     users.insert(newuser)
+
+def add_frequency(freq):
+    pass
+    #frequency = [i*1 for i in range(int(frequency))]
 
 def subscribe_user(phone,action): #set action to Yes or No
     update = users.update({"Phone":phone},{"$set": {"Subscribed":action,"Date":datetime.now()}})
@@ -55,7 +55,6 @@ def findrandom(taglist):
         {"Book":"Proverbs","Tags":{"$in":taglist}})[random.randrange(count)]
     t = str(randomverse["Chapter"]) + ":" + str(randomverse["Verse"])
     return  t
-
 
 #uses findrandom until a verse is found that doesn't exist in history.
 def selectverse(phone):
@@ -108,30 +107,34 @@ def make_message(verse_id):
     message = message.replace(":",";")
     return message
 
+def sendtext(phone,message): #using Plivo
+    # Your PLIVO_AUTH_ID and PLIVO_AUTH_TOKEN can be found
+    # on your Plivo Dashboard https://manage.plivo.com/dashboard
+    PLIVO_AUTH_ID = config.plivo_auth
+    PLIVO_AUTH_TOKEN = config.plivo_token
+
+    # Enter your Plivo phone number. This will show up on your caller ID
+    plivo_number = config.plivo_number
+
+    message_params = {
+          'src':plivo_number,
+          'dst':phone,
+          'text':message,
+        }
+    p = plivo.RestAPI(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
+    print p.send_message(message_params)
+
+def sendfirst(phone):
+    message = ("The fear of the LORD is the beginning of knowledge; "
+                   "fools despise wisdom and instruction. 1 7") 
+    sendtext(phone,message)
+
 def sendconfirm(phone):
-    #establish a connection with gmail
-    server = smtplib.SMTP( "smtp.gmail.com",587)
-    server.starttls()
-    server.login(config.username,config.password)
-
     user = users.find_one({"Phone":phone})   
-    carrier = user["Carrier"]
-    address = str(phone) + carrier_list[carrier]
-    #two confirm texts are sent
-    if userexist(phone):
-        message = ("The fear of the LORD is the beginning of knowledge; " 
-                   "fools despise wisdom and instruction. 1 7")
-    else:
-        message = "This is your " + appname + " confirmation code " + str(user["Confirmation"])
-    #send text
-    server.sendmail('Wisdom',address,message)
-
+    message = "This is your " + appname + " confirmation code " + str(user["Confirmation"])
+    sendtext(phone,message)
+   
 def sendproverbs():
-    #establish connection to gmail
-    server = smtplib.SMTP( "smtp.gmail.com",587)
-    server.starttls()
-    server.login(config.username,config.password)
-
     today = datetime.strftime(datetime.today(),"%w")
 
     #loop through user database
@@ -147,7 +150,7 @@ def sendproverbs():
         #send text
         if int(today) in frequency: 
             print message
-            server.sendmail('Wisdom',address,message)
+            sendtext(phone,message)
        
 #convert distinct tags into tuples for checkboxes
 def distincttag():
