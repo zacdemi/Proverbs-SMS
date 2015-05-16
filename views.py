@@ -20,7 +20,7 @@ def home():
             return redirect(url_for("preferences",phone=phone))
         else:
             proverbs.adduser(phone)
-            #proverbs.sendconfirm(phone)
+            proverbs.sendconfirm(phone)
         return redirect(url_for("confirmation",phone=phone))
     else:
         flash_errors(form) 
@@ -32,7 +32,6 @@ def confirmation(phone):
     if request.method == 'POST' and form.validate():
         confirm_code = form.confirm_code.data
         if proverbs.checkconfirm(phone,confirm_code):
-            #proverbs.sendfirst(phone)
             return redirect(url_for('preferences',phone=phone))
         else:
             flash("Confirm code not found. Please try again.")
@@ -67,6 +66,7 @@ def success(phone):
        message = "You have been unsubscribed. Thank you for using get proverbs!"
     else:
        message = "Success! Thanks for signing up!" #proverbs.user_status(phone)
+       proverbs.sendfirst(phone)
     flash(message)
     return render_template('success.html')
 
@@ -80,4 +80,4 @@ if __name__ == "__main__":
       DEBUG = True,
       CSRF_ENABLED = True,
       SECRET_KEY = config.secret_key)
-    app.run()
+    app.run(host='104.131.27.56',port=5001)

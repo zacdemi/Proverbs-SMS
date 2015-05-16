@@ -10,7 +10,7 @@ db = client.bible
 collection = db.bible
 users = db.users
 carrier_list = {'AT&T':'@mms.att.net','Verizon':'@vtext.com','Sprint':'@messaging.sprintpcs.com'}
-appname = "Proverbs-SMS"
+appname = "get proverbs"
 
 def adduser(phone):
     #generate new confirmation code
@@ -102,9 +102,7 @@ def make_message(verse_id):
 
     proverb = collection.find_one({"Book":"Proverbs","Chapter":chapter,"Verse":verse})
     line = proverb["Line"]
-    message =  line + " " + str(chapter) + " " + str(verse)
-    #gmail won't send colons
-    message = message.replace(":",";")
+    message =  line + " " + str(verse_id)
     return message
 
 def sendtext(phone,message): #using Plivo
@@ -118,7 +116,7 @@ def sendtext(phone,message): #using Plivo
 
     message_params = {
           'src':plivo_number,
-          'dst':phone,
+          'dst': "1" + phone,
           'text':message,
         }
     p = plivo.RestAPI(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
@@ -126,7 +124,7 @@ def sendtext(phone,message): #using Plivo
 
 def sendfirst(phone):
     message = ("The fear of the LORD is the beginning of knowledge; "
-                   "fools despise wisdom and instruction. 1 7") 
+            "fools despise wisdom and instruction. 1:7") 
     sendtext(phone,message)
 
 def sendconfirm(phone):
@@ -141,7 +139,6 @@ def sendproverbs():
     subscribers = users.find({"Test":"Yes"}) 
     for each in subscribers:
         phone = each["Phone"]
-        carrier = each["Carrier"]
         tags = each["Tags"]
         frequency = each["Frequency"]
         address = str(phone) + carrier_list[carrier]
