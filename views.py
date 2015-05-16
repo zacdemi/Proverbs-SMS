@@ -43,13 +43,12 @@ def confirmation(phone):
 @app.route('/home/preferences/<phone>/',methods = ['GET','POST'])
 def preferences(phone):
     form = UserPreferences()
-    unsubscribe = proverbs.userexist(phone)
+    userstatus = proverbs.userstatus(phone)
     if request.method == 'POST':
         if request.form["action"] == "SUBMIT" and form.validate():
             frequency = form.frequency.data
             taglist = form.taglist.data
             proverbs.update_user(phone,taglist,frequency)
-            proverbs.subscribe_user(phone,"Yes")
             return redirect(url_for('success',phone=phone))
         elif request.form["action"] == "UNSUBSCRIBE":
             proverbs.subscribe_user(phone,"No")
@@ -57,16 +56,20 @@ def preferences(phone):
         else:
             flash_errors(form)
     
-    return render_template('preferences.html',form=form,unsubscribe=unsubscribe)
+    return render_template('preferences.html',form=form,userstatus=userstatus)
 
 @app.route('/home/success/<phone>/',methods = ['GET','POST'])
 def success(phone):
-    subscribe = proverbs.userexist(phone)
-    if not subscribe:
-       message = "You have been unsubscribed. Thank you for using get proverbs!"
-    else:
-       message = "Success! Thanks for signing up!" #proverbs.user_status(phone)
-       proverbs.sendfirst(phone)
+    status = proverbs.userstatus(phone)
+    if status == "No":
+        message = "You have been unsubscribed. Thank you for using get proverbs!"
+    elif status == "Not Yet":
+        message = "Success! Thanks for signing up!" #proverbs.user_status(phone)
+        proverbs.subscribe_user(phone,"Yes")
+        proverbs.sendfirst(phone)
+    elif status == "Yes":
+        message = "Your preferences have been successfully updated!"  
+
     flash(message)
     return render_template('success.html')
 

@@ -21,7 +21,7 @@
         {{form.frequency()}}
         {{form.taglist()}}
         <input type="submit" class="button" name="action" id="submit" value="SUBMIT">
-        {% if unsubscribe == True %}
+        {% if userstatus == "Yes"  %}
             <input type="submit" class="button" name="action" id="submit" value="UNSUBSCRIBE">
         {% endif %}
     </form>

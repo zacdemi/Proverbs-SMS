@@ -16,7 +16,7 @@ def adduser(phone):
     #generate new confirmation code
     confirmation = random.randrange(1000,5000)
 
-    newuser = {"Phone":phone,"Confirmation":confirmation,"History":[]}
+    newuser = {"Phone":phone,"Confirmation":confirmation,"History":[],"Subscribed":"Not Yet"}
     #remove user if they already existed
     users.remove({"Phone":phone})
     users.insert(newuser)
@@ -28,6 +28,10 @@ def add_frequency(freq):
 def subscribe_user(phone,action): #set action to Yes or No
     update = users.update({"Phone":phone},{"$set": {"Subscribed":action,"Date":datetime.now()}})
     return update
+
+def userexist(phone):
+    count = users.find({"Phone":phone,"Subscribed":"Yes"}).count()
+    return count > 0
 
 def update_user(phone,taglist,frequency):
     frequency = [i*1 for i in range(int(frequency))]
@@ -41,9 +45,10 @@ def checkconfirm(phone,confirmation):
     except:
         return False
 
-def userexist(phone):
-    count = users.find({"Phone":phone,"Subscribed":"Yes"}).count()
-    return count > 0
+def userstatus(phone):
+    user = users.find_one({"Phone":phone})
+    status = user["Subscribed"]
+    return status
 
 #finds a random proverb using only tags the user has selected
 def findrandom(taglist):
@@ -136,12 +141,11 @@ def sendproverbs():
     today = datetime.strftime(datetime.today(),"%w")
 
     #loop through user database
-    subscribers = users.find({"Test":"Yes"}) 
+    subscribers = users.find({}) 
     for each in subscribers:
         phone = each["Phone"]
         tags = each["Tags"]
         frequency = each["Frequency"]
-        address = str(phone) + carrier_list[carrier]
         message = make_message(selectverse(phone))
 
         #send text
