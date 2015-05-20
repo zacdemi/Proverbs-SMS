@@ -21,7 +21,7 @@ class Phone(Form):
    
 class UserPreferences(Form):
     frequency = SelectField('Frequency',choices=frequency_list)
-    taglist = MultiCheckboxField('Select Tags',choices=tagtuple,validators=[validators.Required()])
+    taglist = MultiCheckboxField('Tags',choices=tagtuple,validators=[validators.Required()])
 
 class ConfirmCode(Form):
     confirm_code = IntegerField('Enter Confirmation Code',validators=[validators.Required()])

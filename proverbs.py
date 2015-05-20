@@ -9,7 +9,6 @@ client = MongoClient()
 db = client.bible
 collection = db.bible
 users = db.users
-carrier_list = {'AT&T':'@mms.att.net','Verizon':'@vtext.com','Sprint':'@messaging.sprintpcs.com'}
 appname = "get proverbs"
 
 def adduser(phone):
@@ -17,7 +16,7 @@ def adduser(phone):
     confirmation = random.randrange(1000,5000)
 
     newuser = {"Phone":phone,"Confirmation":confirmation,"History":[],"Subscribed":"Not Yet"}
-    #remove user if they already existed
+    #remove user if they already exist
     users.remove({"Phone":phone})
     users.insert(newuser)
 
@@ -141,10 +140,9 @@ def sendproverbs():
     today = datetime.strftime(datetime.today(),"%w")
 
     #loop through user database
-    subscribers = users.find({}) 
+    subscribers = users.find({"Subscribed":"Yes"}) 
     for each in subscribers:
         phone = each["Phone"]
-        tags = each["Tags"]
         frequency = each["Frequency"]
         message = make_message(selectverse(phone))
 
@@ -152,7 +150,17 @@ def sendproverbs():
         if int(today) in frequency: 
             print message
             sendtext(phone,message)
-       
+
+#randomize member frequency
+#run at the start of each week
+def update_freq():
+    subscribers = users.find({"Subscribed":"Yes"})
+    for each in subscribers:
+        phone = each["Phone"]
+        freq = each["Frequency"]
+        new_freq = random.sample(range(7),len(freq))
+        users.update({"Phone":phone},{"$set":{"Frequency":new_freq}})
+
 #convert distinct tags into tuples for checkboxes
 def distincttag():
     #taglist = collection.distinct("Tags")
