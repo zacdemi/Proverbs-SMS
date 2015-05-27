@@ -1,4 +1,5 @@
 config.py
+sendgmail.py
 *.pyc
 *.swp
 test.py

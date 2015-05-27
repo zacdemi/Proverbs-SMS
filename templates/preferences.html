@@ -19,9 +19,9 @@
     <form action ""  method="post">
         {{form.hidden_tag()}}
         {{form.taglist.label}}
-        {{form.taglist()}}
+        {{form.taglist()}}<br>
         {{form.frequency.label}}
-        {{form.frequency()}}<br><br>
+        {{form.frequency()}}<br><br><br>
         <input type="submit" class="button" name="action" id="submit" value="SUBMIT">
         {% if userstatus == "Yes"  %}
             <input type="submit" class="button" name="action" id="submit" value="UNSUBSCRIBE">

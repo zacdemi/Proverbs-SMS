@@ -18,7 +18,8 @@
         {% endwith %}
     <form action "{{url_for('home')}}"  method="post">
         {{form.hidden_tag()}}
-        {{form.phone(placeholder="1234567890")}}
+        {{form.phone.label}}
+        {{form.phone(placeholder="1234567890")}}<br><br>
         <input type="submit" class="button" name="action" id="submit" value="SIGN UP / UPDATE">
     </form><br>
     <p>Proverbs will be sent to your phone based on selected tags and frequency. You can come back anytime to unsubscribe or update preferences.</p>

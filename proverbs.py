@@ -11,6 +11,10 @@ collection = db.bible
 users = db.users
 appname = "get proverbs"
 
+def subscriber_count():
+    count = users.find({"Subscribed":"Yes"}).count()
+    return count
+
 def adduser(phone):
     #generate new confirmation code
     confirmation = random.randrange(1000,5000)

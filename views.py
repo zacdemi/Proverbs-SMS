@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from pforms import Phone,UserPreferences,ConfirmCode
+from sendgmail import sendnotification
 import proverbs
 import flask
 import config
@@ -52,6 +53,8 @@ def preferences(phone):
             return redirect(url_for('success',phone=phone))
         elif request.form["action"] == "UNSUBSCRIBE":
             proverbs.subscribe_user(phone,"No")
+            #send message to marketing manager
+            sendnotification(phone,"unsubscribed")
             return redirect(url_for('success',phone=phone))
         else:
             flash_errors(form)
@@ -67,6 +70,7 @@ def success(phone):
         message = "Success! Thanks for signing up!" #proverbs.user_status(phone)
         proverbs.subscribe_user(phone,"Yes")
         proverbs.sendfirst(phone)
+        sendnotification(phone,"subscribed")
     elif status == "Yes":
         message = "Your preferences have been successfully updated!"  
 
