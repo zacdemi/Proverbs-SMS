@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import config
 from datetime import datetime
 import random
@@ -10,6 +11,16 @@ db = client.bible
 collection = db.bible
 users = db.users
 appname = "get proverbs"
+
+def return_phone(user_id):
+    user = users.find_one({"_id":ObjectId(user_id)})
+    phone = user["Phone"]
+    return phone
+
+def return_id(phone):
+    user = users.find_one({"Phone":phone})
+    user_id = user["_id"]
+    return user_id
 
 def subscriber_count():
     count = users.find({"Subscribed":"Yes"}).count()
