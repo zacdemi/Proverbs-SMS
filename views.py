@@ -23,7 +23,8 @@ def home():
         else:
             proverbs.adduser(phone)
             proverbs.sendconfirm(phone)
-        return redirect(url_for("confirmation",phone=phone))
+            user_id = proverbs.return_id(phone)
+        return redirect(url_for("confirmation",user_id=user_id))
     else:
         flash_errors(form) 
     return render_template('home.html',form=form)
@@ -56,7 +57,7 @@ def preferences(user_id):
             return redirect(url_for('success',user_id=user_id))
         elif request.form["action"] == "UNSUBSCRIBE":
             proverbs.subscribe_user(phone,"No")
-            send message to marketing manager
+            #send message to marketing manager
             sendnotification(phone,"unsubscribed")
             return redirect(url_for('success',user_id=user_id))
         else:
