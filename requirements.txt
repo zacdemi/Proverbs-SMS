@@ -1,0 +1,17 @@
+
+
+
+
+myApp
+Flask
+Flask-Bcrypt
+Flask-Login
+Flask-Mail
+Flask-PyMongo
+Flask-WTF
+Jinja2
+WTForms
+Werkzeug
+plivo
+pymongo
+python-bcrypt
