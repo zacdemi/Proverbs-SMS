@@ -5,6 +5,7 @@ import config
 from datetime import datetime
 import random
 import plivo
+import smtplib
 
 client = MongoClient()
 db = client.bible
@@ -41,6 +42,7 @@ def add_frequency(freq):
 
 def subscribe_user(phone,action): #set action to Yes or No
     update = users.update({"Phone":phone},{"$set": {"Subscribed":action,"Date":datetime.now()}})
+    sendnotification(phone,action)
     return update
 
 def userexist(phone):
@@ -218,3 +220,19 @@ def findtag(*args):
     for each in search:
          results.append(each)
     return results 
+
+#send text for free through gmail -AT&T only
+def sendnotification(phone,status):
+        #establish connection to gmail
+        server = smtplib.SMTP( "smtp.gmail.com",587)
+        server.starttls()
+        server.login(config.email_username,config.email_password)
+        count = str(subscriber_count())
+        message = str(phone) + ' has ' + status  + '. current subscriber count is ' + count
+
+        #send text
+        server.sendmail('Wisdom',config.phone1 + '@mms.att.net',message)
+        server.sendmail('Wisdom',config.phone2 + '@mms.att.net',message)
+
+
+
