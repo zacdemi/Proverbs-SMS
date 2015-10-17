@@ -42,7 +42,10 @@ def add_frequency(freq):
 
 def subscribe_user(phone,action): #set action to Yes or No
     update = users.update({"Phone":phone},{"$set": {"Subscribed":action,"Date":datetime.now()}})
-    sendnotification(phone,action)
+    try: 
+        sendnotification(phone,action)
+    except:
+        pass
     return update
 
 def userexist(phone):

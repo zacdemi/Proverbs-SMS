@@ -88,4 +88,4 @@ if __name__ == "__main__":
       DEBUG = True,
       CSRF_ENABLED = True,
       SECRET_KEY = config.secret_key)
-    app.run(host='127.0.0.1',port=5001)
+    app.run(host='0.0.0.0',port=5001)
