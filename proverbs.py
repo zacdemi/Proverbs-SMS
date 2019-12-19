@@ -101,7 +101,7 @@ def selectverse(phone):
             break
 
         count = count + 1
-        print count
+        print(count)
     return verse_id
 
 #adds new verse to end of history array
@@ -130,21 +130,15 @@ def make_message(verse_id):
     return message
 
 def sendtext(phone,message): #using Plivo
-    # Your PLIVO_AUTH_ID and PLIVO_AUTH_TOKEN can be found
-    # on your Plivo Dashboard https://manage.plivo.com/dashboard
-    PLIVO_AUTH_ID = config.plivo_auth
-    PLIVO_AUTH_TOKEN = config.plivo_token
 
-    # Enter your Plivo phone number. This will show up on your caller ID
-    plivo_number = config.plivo_number
-
-    message_params = {
-          'src':plivo_number,
-          'dst': "1" + phone,
-          'text':message,
-        }
-    p = plivo.RestAPI(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
-    print p.send_message(message_params)
+    client = plivo.RestClient(config.PLIVO_AUTH_ID, config.PLIVO_AUTH_TOKEN)
+    response = client.messages.create(
+        src=config.plivo_number,
+        dst='1' + phone,
+        text=message,
+        #url='http://foo.com/sms_status/'
+    )
+    print(response)
 
 def sendfirst(phone):
     message = ("The fear of the LORD is the beginning of knowledge; "
@@ -168,7 +162,7 @@ def sendproverbs():
 
         #send text
         if int(today) in frequency: 
-            print message
+            print(message)
             sendtext(phone,message)
 
 #randomize member frequency
@@ -201,7 +195,7 @@ def distincttag():
 def verse_length():
     for verse in collection.find({"Book":"Proverbs"}):
         if len(verse["Line"]) >= 160:
-            print verse["Line"]
+            print(verse["Line"])
 
 def proverbs_clock():
     t = datetime.time(datetime.now())

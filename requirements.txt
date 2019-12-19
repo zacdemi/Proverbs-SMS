@@ -1,7 +1,3 @@
-
-
-
-
 myApp
 Flask
 Flask-Bcrypt
