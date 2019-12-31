@@ -1,17 +1,22 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-from pforms import Phone,UserPreferences,ConfirmCode
+#!/usr/bin/env python3
+import os
 import proverbs
 import flask
-import config
 
-app = Flask(__name__)
+from pforms import Phone,UserPreferences,ConfirmCode
+from flask import Flask, render_template, redirect, url_for, request, flash
 
-@app.route('/')
+application = Flask(__name__)
+application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+application.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
+application.config['DEBUG'] = True
+
+@application.route('/')
 def proverbs_page():
 #redirect to home page!
     return redirect(url_for('home'))
 
-@app.route('/home/',methods = ['GET','POST'])
+@application.route('/home/',methods = ['GET','POST'])
 def home():
     form = Phone()
     if request.method == 'POST' and form.validate():
@@ -28,7 +33,7 @@ def home():
         flash_errors(form) 
     return render_template('home.html',form=form)
 
-@app.route('/home/confirm/<user_id>/',methods = ['GET','POST'])
+@application.route('/home/confirm/<user_id>/',methods = ['GET','POST'])
 def confirmation(user_id):
     form = ConfirmCode()
     phone = proverbs.return_phone(user_id)
@@ -43,7 +48,7 @@ def confirmation(user_id):
     
     return render_template('confirm.html',form=form)
 
-@app.route('/home/preferences/<user_id>/',methods = ['GET','POST'])
+@application.route('/home/preferences/<user_id>/',methods = ['GET','POST'])
 def preferences(user_id):
     form = UserPreferences()
     phone = proverbs.return_phone(user_id)
@@ -62,7 +67,7 @@ def preferences(user_id):
     
     return render_template('preferences.html',form=form,userstatus=userstatus)
 
-@app.route('/home/success/<user_id>/',methods = ['GET','POST'])
+@application.route('/home/success/<user_id>/',methods = ['GET','POST'])
 def success(user_id):
     phone = proverbs.return_phone(user_id)
     status = proverbs.userstatus(phone)
@@ -84,8 +89,4 @@ def flash_errors(form):
             flash(u"Error in the %s field - %s" % (getattr(form, field).label.text,error),'error')
 
 if __name__ == "__main__":
-    app.config.update(
-      DEBUG = True,
-      CSRF_ENABLED = True,
-      SECRET_KEY = config.secret_key)
-    app.run(host='0.0.0.0',port=5001)
+    application.run(host='0.0.0.0',port=5001)
