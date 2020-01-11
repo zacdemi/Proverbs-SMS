@@ -20,7 +20,7 @@ def proverbs_page():
 def home():
     form = SignUp()
     if request.method == 'POST' and form.validate():
-        phone = form.phone.data.replace('-','')
+        phone = form.phone.data
         if proverbs.userexist(phone):
             user_id = proverbs.return_id(phone)
             return redirect(url_for("preferences",user_id=user_id))

@@ -141,7 +141,7 @@ def sendtext(phone,message): #using Plivo
     print(response)
 
 def sendfirst(phone):
-    message = ("The fear of YHVH is the beginning of knowledge; "
+    message = ("The fear of YHWH is the beginning of knowledge; "
             "fools despise wisdom and instruction. 1:7") 
     sendtext(phone,message)
 
