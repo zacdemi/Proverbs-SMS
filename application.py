@@ -3,7 +3,7 @@ import os
 import proverbs
 import flask
 
-from pforms import Phone,UserPreferences,ConfirmCode
+from pforms import SignUp, UserPreferences, ConfirmCode
 from flask import Flask, render_template, redirect, url_for, request, flash
 
 application = Flask(__name__)
@@ -18,9 +18,9 @@ def proverbs_page():
 
 @application.route('/home/',methods = ['GET','POST'])
 def home():
-    form = Phone()
+    form = SignUp()
     if request.method == 'POST' and form.validate():
-        phone = form.phone.data
+        phone = form.phone.data.replace('-','')
         if proverbs.userexist(phone):
             user_id = proverbs.return_id(phone)
             return redirect(url_for("preferences",user_id=user_id))
