@@ -8,6 +8,7 @@ virt
 .ebignore
 .env
 mongo_import.py
+__pycache__
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

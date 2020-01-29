@@ -1,37 +1,34 @@
 #!/usr/bin/env python3
 import os
 import proverbs
-import flask
+import phonenumbers
 
-from pforms import SignUp, UserPreferences, ConfirmCode
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, jsonify
 
 application = Flask(__name__)
 application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 application.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
 application.config['DEBUG'] = True
 
-@application.route('/')
-def proverbs_page():
-#redirect to home page!
-    return redirect(url_for('home'))
-
-@application.route('/home/',methods = ['GET','POST'])
+@application.route('/',methods = ['POST'])
 def home():
-    form = SignUp()
-    if request.method == 'POST' and form.validate():
-        phone = form.phone.data
-        if proverbs.userexist(phone):
-            user_id = proverbs.return_id(phone)
-            return redirect(url_for("preferences",user_id=user_id))
-        else:
-            proverbs.adduser(phone)
-            proverbs.sendconfirm(phone)
-            user_id = proverbs.return_id(phone)
-        return redirect(url_for("confirmation",user_id=user_id))
+    data = request.get_json()
+    
+    #verify phone number
+    phone = phonenumbers.parse(data['phone'])
+    if phonenumbers.is_valid_number(phone):
+        return jsonify(message="Success"), 203
     else:
-        flash_errors(form) 
-    return render_template('home.html',form=form)
+        return jsonify(message='Ivalid phone number'), 403
+
+    #verify if user exist
+    #if proverbs.userexist(phone):
+    #    user_id = proverbs.return_id(phone)
+    #    return redirect(url_for("preferences",user_id=user_id))
+    #else:
+    #    proverbs.adduser(phone)
+    #    proverbs.sendconfirm(phone)
+    #    user_id = proverbs.return_id(phone)
 
 @application.route('/home/confirm/<user_id>/',methods = ['GET','POST'])
 def confirmation(user_id):
