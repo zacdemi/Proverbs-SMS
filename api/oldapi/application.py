@@ -4,25 +4,27 @@ import proverbs
 import phonenumbers
 
 from flask import Flask, render_template, redirect, url_for, request, jsonify
+from flask_cors import CORS, cross_origin
 
 application = Flask(__name__)
 application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 application.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
 application.config['DEBUG'] = True
+CORS(application)
 
-@application.route('/',methods = ['POST'])
+@application.route('/',methods = ['POST','GET'])
 def home():
     data = request.get_json()
     
     #verify phone number
     phone = phonenumbers.parse(data['phone'])
     if phonenumbers.is_valid_number(phone):
-        return jsonify(message="Success"), 203
+        return jsonify({'message':'success!','data':data}), 203
     else:
-        return jsonify(message='Ivalid phone number'), 403
+        return jsonify({'message': 'Ivalid phone number'}), 403
 
-    #verify if user exist
     #if proverbs.userexist(phone):
+    #verify if user exist
     #    user_id = proverbs.return_id(phone)
     #    return redirect(url_for("preferences",user_id=user_id))
     #else:
@@ -86,4 +88,4 @@ def flash_errors(form):
             flash(u"Error in the %s field - %s" % (getattr(form, field).label.text,error),'error')
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0',port=5001)
+    application.run()
