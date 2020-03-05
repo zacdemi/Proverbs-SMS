@@ -1,3 +1,4 @@
 pynamodb==4.3.1
 boto3
 botocore
+plivo==4.3.6

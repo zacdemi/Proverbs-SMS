@@ -7,6 +7,9 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   tableName: ${self:custom.stage}-users
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: python3.8
@@ -31,7 +34,7 @@ provider:
 
 functions:
   create_user:
-    handler: functions/create_user.create_user
+    handler: handler.create_user
     events:
       - http:
           path: users
