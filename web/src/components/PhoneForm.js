@@ -22,7 +22,7 @@ export const PhoneForm = ({nextStep}) => {
         else {
             setErrors({error:false,message:''})
 
-             const response = await fetch('https://p2r7ot3d2j.execute-api.us-east-1.amazonaws.com/dev/home', {
+             const response = await fetch('https://p2r7ot3d2j.execute-api.us-east-1.amazonaws.com/dev/users', {
                  method: 'POST', 
                  headers: {
                      'Content-Type': 'application/json'

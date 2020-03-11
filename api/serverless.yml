@@ -56,5 +56,17 @@ resources:
         # Set the capacity to auto-scale
         BillingMode: PAY_PER_REQUEST
 
+    CognitoUserPool:
+      type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: cognito_sls_backend_user_pool
+
+    CognitoUserPoolClient:
+      type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: cognito_sls_backend_user_pool
+        UserPoolId:
+          Ref: CognitoUserPool
+
 plugins:
   - serverless-python-requirements
