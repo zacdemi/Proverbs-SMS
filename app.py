@@ -6,17 +6,17 @@ import flask
 from pforms import SignUp, UserPreferences, ConfirmCode
 from flask import Flask, render_template, redirect, url_for, request, flash
 
-application = Flask(__name__)
-application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-application.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
-application.config['DEBUG'] = True
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['DEBUG'] = True
 
-@application.route('/')
+@app.route('/')
 def proverbs_page():
 #redirect to home page!
     return redirect(url_for('home'))
 
-@application.route('/home/',methods = ['GET','POST'])
+@app.route('/home/',methods = ['GET','POST'])
 def home():
     form = SignUp()
     if request.method == 'POST' and form.validate():
@@ -33,7 +33,7 @@ def home():
         flash_errors(form) 
     return render_template('home.html',form=form)
 
-@application.route('/home/confirm/<user_id>/',methods = ['GET','POST'])
+@app.route('/home/confirm/<user_id>/',methods = ['GET','POST'])
 def confirmation(user_id):
     form = ConfirmCode()
     phone = proverbs.return_phone(user_id)
@@ -48,7 +48,7 @@ def confirmation(user_id):
     
     return render_template('confirm.html',form=form)
 
-@application.route('/home/preferences/<user_id>/',methods = ['GET','POST'])
+@app.route('/home/preferences/<user_id>/',methods = ['GET','POST'])
 def preferences(user_id):
     form = UserPreferences()
     phone = proverbs.return_phone(user_id)
@@ -67,7 +67,7 @@ def preferences(user_id):
     
     return render_template('preferences.html',form=form,userstatus=userstatus)
 
-@application.route('/home/success/<user_id>/',methods = ['GET','POST'])
+@app.route('/home/success/<user_id>/',methods = ['GET','POST'])
 def success(user_id):
     phone = proverbs.return_phone(user_id)
     status = proverbs.userstatus(phone)
@@ -89,4 +89,4 @@ def flash_errors(form):
             flash(u"Error in the %s field - %s" % (getattr(form, field).label.text,error),'error')
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0',port=5001)
+    app.run(host='0.0.0.0',port=5001)
