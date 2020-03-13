@@ -3,15 +3,14 @@ import random
 import plivo
 import smtplib
 
+from main import mongo
 from pymongo import MongoClient
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from datetime import datetime
 
-client = MongoClient(f"mongodb+srv://zacdemi:{os.environ.get('MONGO_PW')}@cluster0-qrc2l.mongodb.net/test?retryWrites=true&w=majority")
-db = client.bible
-collection = db.bible
-users = db.users
+collection = mongo.db.proverbs
+users = mongo.db.users
 appname = "get proverbs"
 
 def return_phone(user_id):
@@ -131,7 +130,6 @@ def make_message(verse_id):
     return message
 
 def sendtext(phone,message): #using Plivo
-
     client = plivo.RestClient(os.environ.get('PLIVO_AUTH_ID'), os.environ.get('PLIVO_AUTH_TOKEN'))
     response = client.messages.create(
         src=os.environ.get('PLIVO_NUMBER'),

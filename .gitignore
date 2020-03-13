@@ -1,15 +1,7 @@
-sendgmail.py
 *.pyc
 *.swp
-test.py
-textPhone.py
-send.py
 virt
-.ebignore
 .env
-mongo_import.py
+virt
+__pycache__
 
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml

@@ -1,7 +1,7 @@
 import json
 import phonenumbers
 
-from proverbs import distincttag
+from main.proverbs import distincttag
 from wtforms import (
     validators, StringField,TextField, IntegerField, SelectField, 
     SelectMultipleField, widgets, Form, ValidationError, SubmitField )

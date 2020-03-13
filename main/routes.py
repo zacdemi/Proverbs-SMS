@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 import os
-import proverbs
-import flask
+import main.proverbs as proverbs
 
-from pforms import SignUp, UserPreferences, ConfirmCode
-from flask import Flask, render_template, redirect, url_for, request, flash
+from main import app
+from main.pforms import SignUp, UserPreferences, ConfirmCode
+from flask import render_template, redirect, url_for, request, flash
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['DEBUG'] = True
 
 @app.route('/')
 def proverbs_page():
@@ -87,6 +83,3 @@ def flash_errors(form):
     for field, errors in form.errors.items():
         for error in errors:
             flash(u"Error in the %s field - %s" % (getattr(form, field).label.text,error),'error')
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5001)
