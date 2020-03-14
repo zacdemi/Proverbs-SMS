@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {Form, Button, Message} from 'semantic-ui-react';
-import PhoneInput, {isPossiblePhoneNumber} from 'react-phone-number-input'
+import PhoneInput, {isPossiblePhoneNumber} from 'react-phone-number-input';
+import flags from 'react-phone-number-input/flags';
 import 'react-phone-number-input/style.css';
+
 
 export const PhoneForm = ({nextStep}) => {
     const [phone, setPhone] = useState();
@@ -45,7 +47,7 @@ export const PhoneForm = ({nextStep}) => {
             error={errors.error}>
             <PhoneInput
                 defaultCountry='US'
-                placeholder='Enter phone number' 
+                flags={flags}
                 value={phone} 
                 onChange={setPhone}/>
             <Message
